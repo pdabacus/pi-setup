@@ -7,9 +7,35 @@
 
 workdir="/home/pavan/setup_pi"
 cd "$workdir"
+
+if [[ "$@" =~ .*help.* ]] || [[ "$@" =~ .*-h.* ]]; then
+    cat << EOF
+$0 - setup archlinux arm for raspberry pi 3 on sdcard
+options:
+  -h --help     show this help menu
+  -f --full     do a complete wipe and repartition/format of sdcard
+                (for first time running script do this option)
+examples:
+$0 --full:
+                downloads latest archlinuxarm,
+                repartitions sdcard,
+                extracts image onto sdcard,
+                pushes customization scripts
+
+$0:
+                leaves os install alone and pushes customization scripts
+EOF
+    exit 0
+fi
+
 verify_os=0
 format_sdcard=0
 install_os=0
+if [[ "$@" =~ .*full.* ]] || [[ "$@" =~ .*-f.* ]]; then
+    verify_os=1
+    format_sdcard=1
+    install_os=1
+fi
 
 os_file="ArchLinuxARM-rpi-aarch64-latest.tar.gz"
 os_url="http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz"
@@ -55,7 +81,7 @@ fi
 lsblk
 echo "select sdcard for rasp pi operating system (ex. /dev/mmcblk0)"
 read -p ">> " device
-if [[ ! ${device} =~ ^/dev/* ]]; then
+if [[ ! ${device} =~ ^/dev/.* ]]; then
     device="/dev/${device}"
 fi
 if [[ ! -e "${device}" ]]; then
