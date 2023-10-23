@@ -4,6 +4,8 @@ script to configure sdcard for raspberry pi archlinux arm with customization
 ## usage:
 * plug in an sdcard
 * edit the init scripts in `customize/`
+* * change the username in `customize/root/username`
+* * use `wpa_passphrase` to create `customize/root/wpa_supplicant.conf`
 * for first time running script use `sudo ./setup.sh --full`
 * after os is installed, for repeat updating customization: `sudo ./setup.sh`
 
