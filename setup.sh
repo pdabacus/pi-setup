@@ -14,7 +14,8 @@ install_os=0
 os_file="ArchLinuxARM-rpi-aarch64-latest.tar.gz"
 os_url="http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz"
 os_md5_url="http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz.md5"
-boot_part_size_mb=256
+boot_part_size_mb=$(cat customize/boot_part_size_mb)
+alarm_user=$(cat customize/root/username)
 ########################################
 # download operating system tar
 ########################################
@@ -154,7 +155,14 @@ echo "########################################"
 cat "${boot_mount}"/config.txt
 echo "########################################"
 
-echo "customizing rasp pi user alarm:alarm"
+echo "customizing rasp pi pushing root/init.sh"
+cp -a customize/root/. "${root_mount}/root/"
+
+echo "customizing rasp pi pushing user home folder"
+cp -a customize/home/. "${root_mount}/home/${alarm_user}"
+
+echo "setting autologin to root with systemd getty@tty1"
+
 
 echo "unmounting partitions"
 umount "${root_mount}"
