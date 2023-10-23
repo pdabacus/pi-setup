@@ -15,6 +15,7 @@ options:
   -h --help     show this help menu
   -f --full     do a complete wipe and repartition/format of sdcard
                 (for first time running script do this option)
+  -r --reinit   clears the state of init milestones and reruns all init scripts
 examples:
 $0 --full:
                 downloads latest archlinuxarm,
@@ -24,6 +25,10 @@ $0 --full:
 
 $0:
                 leaves os install alone and pushes customization scripts
+
+$0 --reinit:
+                leaves os install alone and pushes customization scripts
+                clears the state of init milestones and reruns all init scripts
 EOF
     exit 0
 fi
@@ -35,6 +40,11 @@ if [[ "$@" =~ .*full.* ]] || [[ "$@" =~ .*-f.* ]]; then
     verify_os=1
     format_sdcard=1
     install_os=1
+fi
+
+clear_init_milestones=0
+if [[ "$@" =~ .*reinit.* ]] || [[ "$@" =~ .*-r.* ]]; then
+    clear_init_milestones=1
 fi
 
 os_file="ArchLinuxARM-rpi-aarch64-latest.tar.gz"
@@ -199,6 +209,15 @@ cat << EOF > "${systemd_dir}/getty@tty1.service.d/override.conf"
 ExecStart=
 ExecStart=-/usr/bin/agetty --autologin root --noclear %I $TERM
 EOF
+
+find "${root_mount}/root/" -type f -name .initialized -exec rm -f {} \;
+find "${root_mount}/home/" -type f -name .initialized -exec rm -f {} \;
+
+if [[ "${clear_init_milestones}" -eq 1 ]]; then
+    echo "clearing out init milestones"
+    find "${root_mount}/root/" -type f -name .initialize* -exec echo {} \; -exec rm -f {} \;
+    find "${root_mount}/home/" -type f -name .initialize* -exec echo {} \; -exec rm -f {} \;
+fi
 
 echo "unmounting partitions"
 umount "${root_mount}"
