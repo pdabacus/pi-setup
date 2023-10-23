@@ -121,11 +121,16 @@ sync_time() {
         test_wifi && \
         echo "setting timezone to mountain time" && \
         ln -sf /usr/share/zoneinfo/America/Denver /etc/localtime && \
+        echo "setting time based on google server" && \
+        timedatectl set-ntp false && \
+        time_srv=$(date +"%b %d %H:%M:%S" -d "$(curl -v google.com |& grep Date | sed 's/< Date: //')") && \
+        timedatectl set-time "$time_srv" && \
         echo "installing ntpd" && \
         pacman -Sy --noconfirm ntp && \
         systemctl enable --now ntpd && \
         echo "syncing time with ntp" && \
         timedatectl set-ntp true && \
+        timedatectl && \
         get_file_portion_md5 sync_time > ~/.initialized-4-time || \
         ( echo "error: couldnt sync timezones and hwclock"; exit 1 ) || exit 1
     fi
@@ -152,6 +157,7 @@ update_packages() {
         echo "installing and updating packages" && \
         pacman -Sy --noconfirm archlinux-keyring && \
         pacman -Su --noconfirm base-devel python vim go git bash-completion && \
+        pacman -Sc --noconfirm && \
         get_file_portion_md5 update_packages > ~/.initialized-6-update || \
         ( echo "error: couldnt update packages"; exit 1 ) || exit 1
     fi

@@ -18,5 +18,9 @@ if [[ $? -ne 0 ]]; then
 fi
 ip addr show
 
-echo main
+
+echo "########################################"
+echo "# main                                 #"
+echo "########################################"
+docker run --rm -it hello-world
 
