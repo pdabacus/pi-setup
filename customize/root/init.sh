@@ -27,15 +27,65 @@ fi
 
 setup_user() {
     if check_md5 ~/.initialized-1-user setup_user; then
-        echo setting up user
-        getent passwd 1000
-        cat ~/username
+        default_user=$(cat ~/username)
+        echo "setting up user '${default_user}'"
+        etcpasswd=$(getent passwd 1000)
+        etcgroup=$(getent group 1000)
+        cur_user=$(echo ${etcpasswd} | cut -d":" -f1)
+        cur_group=$(echo ${etcgroup} | cut -d":" -f1)
+        if [[ "${cur_user}" != "${default_user}" ]]; then
+            echo "moving user '${cur_user}' to '${default_user}'"
+            usermod -d "/home/${default_user}" -l "${default_user}" "${cur_user}"
+            rm -rf "/home/${cur_user}"
+            chown -R "${default_user}:${default_user}"
+        fi
+        if [[ "${cur_group}" != "${default_user}" ]]; then
+            echo "changing group '${cur_group}' to '${default_user}'"
+            groupmod -n "${default_user}" "${cur_group}"
+        fi
+        if ! groups "${default_user}" | grep wheel >/dev/null; then
+            echo "adding '${default_user}' to wheel group"
+            usermod -a -G wheel "${default_user}"
+        fi
         get_file_portion_md5 setup_user > ~/.initialized-1-user
     fi
 }
 setup_user
 
-# localtime vim sudo
+setup_keyring() {
+    if check_md5 ~/.initialized-2-keyring setup_keyring; then
+        echo "setting up archlinux arm keyring"
+        pacman-key --init
+        pacman-key --populate archlinuxarm
+        get_file_portion_md5 setup_keyring > ~/.initialized-2-keyring
+    fi
+}
+setup_keyring
+
+install_sudo() {
+    if check_md5 ~/.initialized-3-sudo install_sudo; then
+        echo "installing sudo"
+        pacman -Sy --noconfim sudo
+        sed -i -r "s|#.*(%wheel.+ALL.+NOPASSWD.+)|\1|" /etc/sudoers
+        get_file_portion_md5 install_sudo > ~/.initialized-3-sudo
+    fi
+}
+install_sudo
+
+setup_auto_login() {
+    default_user=$(cat ~/username)
+    echo "setting autologin to ${default_user} with systemd getty@tty1"
+    getty_service=$(find "/usr/lib/systemd" | grep "/getty@.service" | tail -n 1)
+    systemd_dir="/etc/systemd/system"
+    ln -sf "${getty_service}" "${systemd_dir}/getty.target.wants/getty@tty1.service"
+    mkdir -p "${systemd_dir}/getty@tty1.service.d/"
+cat << EOF > "${systemd_dir}/getty@tty1.service.d/override.conf"
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin root --noclear %I $TERM
+EOF
+}
+setup_auto_login
 
 echo "initialization complete"
 get_file_portion_md5 > ~/.initialized

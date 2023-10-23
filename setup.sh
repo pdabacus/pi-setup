@@ -183,9 +183,11 @@ echo "########################################"
 
 echo "customizing rasp pi: pushing root/init.sh"
 cp -a customize/root/. "${root_mount}/root/"
+chown -R root:root "${root_mount}/root/"
 
 echo "customizing rasp pi: pushing user home folder"
 cp -a customize/home/. "${root_mount}/home/${alarm_user}"
+chown -R 1000:1000 "${root_mount}/home/${alarm_user}"
 
 echo "setting autologin to root with systemd getty@tty1"
 getty_service=$(find "${root_mount}/usr/lib/systemd" | grep "/getty@.service" | tail -n 1 | sed -r "s/^${root_mount}//")
