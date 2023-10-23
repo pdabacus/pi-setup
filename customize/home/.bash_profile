@@ -3,8 +3,9 @@
 #
 
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
-    echo startx
-    #exec startx
+    [[ -f ~/init.sh ]] && ~/init.sh
+    [[ -f ~/main.sh ]] && ~/main.sh
+    #startx
 fi
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc

@@ -155,14 +155,22 @@ echo "########################################"
 cat "${boot_mount}"/config.txt
 echo "########################################"
 
-echo "customizing rasp pi pushing root/init.sh"
+echo "customizing rasp pi: pushing root/init.sh"
 cp -a customize/root/. "${root_mount}/root/"
 
-echo "customizing rasp pi pushing user home folder"
+echo "customizing rasp pi: pushing user home folder"
 cp -a customize/home/. "${root_mount}/home/${alarm_user}"
 
 echo "setting autologin to root with systemd getty@tty1"
-
+getty_service=$(find "${root_mount}/usr/lib/systemd" | grep "/getty@.service" | tail -n 1 | sed -r "s/^${root_mount}//")
+systemd_dir="${root_mount}/etc/systemd/system"
+ln -sf "${getty_service}" "${systemd_dir}/getty.target.wants/getty@tty1.service"
+mkdir -p "${systemd_dir}/getty@tty1.service.d/"
+cat << EOF > "${systemd_dir}/getty@tty1.service.d/override.conf"
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin root --noclear %I $TERM
+EOF
 
 echo "unmounting partitions"
 umount "${root_mount}"

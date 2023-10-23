@@ -2,7 +2,7 @@
 # ~/.xinitrc
 #
 
-# mate
+#~/main.sh
 exec mate-session
 
 
