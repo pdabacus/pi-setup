@@ -126,8 +126,8 @@ sync_time() {
         time_srv=$(date +"%b %d %H:%M:%S" -d "$(curl -v google.com |& grep Date | sed 's/< Date: //')") && \
         timedatectl set-time "$time_srv" && \
         echo "installing ntpd" && \
-        pacman -Sy --noconfirm ntp && \
-        systemctl enable --now ntpd && \
+        pacman -Sy --noconfirm openntpd && \
+        systemctl enable --now openntpd && \
         echo "syncing time with ntp" && \
         timedatectl set-ntp true && \
         timedatectl && \

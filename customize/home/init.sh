@@ -75,5 +75,13 @@ install_docker() {
 }
 install_docker
 
+post_install_reboot() {
+    if check_md5 ~/.initialized-3-reboot post_install_reboot; then
+        get_file_portion_md5 post_install_reboot > ~/.initialized-3-reboot
+        sudo reboot now
+    fi
+}
+post_install_reboot
+
 echo "initialization complete"
 get_file_portion_md5 > ~/.initialized
