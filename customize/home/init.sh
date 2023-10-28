@@ -44,24 +44,17 @@ if ! check_md5 ~/.initialized; then
     exit 0
 fi
 
-install_yay() {
-    if check_md5 ~/.initialized-1-yay install_yay; then
+reset_time() {
+    if check_md5 ~/.initialized-1-time reset_time; then
         sleep 5
         test_wifi && \
         echo "setting timedatectl ntp" && \
         sudo timedatectl net-ntp true && \
-        echo "installing yay" && \
-        git clone "https://aur.archlinux.org/yay/" && \
-        cd yay && \
-        makepkg && \
-        sudo pacman -U --noconfirm yay*pkg.tar* && \
-        cd .. && \
-        rm -rf yay && \
-        get_file_portion_md5 install_yay > ~/.initialized-1-yay || \
+        get_file_portion_md5 reset_time > ~/.initialized-1-time || \
         ( echo "error: couldnt setup yay"; exit 1 ) || exit 1
     fi
 }
-install_yay
+reset_time
 
 clean_space() {
     if check_md5 ~/.initialized-2-clean clean_space; then

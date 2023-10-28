@@ -157,7 +157,9 @@ update_packages() {
         echo "installing and updating packages" && \
         pacman -Sy --noconfirm archlinux-keyring && \
         pacman -Sc --noconfirm && \
-        pacman -Su --noconfirm base-devel python vim go git bash-completion && \
+        pacman -Su --noconfirm && \
+        pacman -Sc --noconfirm && \
+        pacman -S base-devel python vim && \
         pacman -Sc --noconfirm && \
         get_file_portion_md5 update_packages > ~/.initialized-6-update || \
         ( echo "error: couldnt update packages"; exit 1 ) || exit 1
