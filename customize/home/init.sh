@@ -61,19 +61,14 @@ install_yay() {
 }
 install_yay
 
-install_docker() {
-    if check_md5 ~/.initialized-2-docker install_docker; then
-        echo "installing docker"
-        yay -Sy --noconfirm docker && \
-        echo "adding '$(whoami)' to docker group" && \
-        sudo usermod -a -G docker $(whoami) && \
-        echo "starting docker daemon" && \
-        sudo systemctl enable --now docker && \
-        get_file_portion_md5 install_docker > ~/.initialized-2-docker || \
-        ( echo "error: couldnt setup docker"; exit 1 ) || exit 1
+clean_space() {
+    if check_md5 ~/.initialized-2-clean clean_space; then
+        echo "cleaning space on sdcard"
+        get_file_portion_md5 clean_space > ~/.initialized-2-lean || \
+        ( echo "error: couldnt clean space"; exit 1 ) || exit 1
     fi
 }
-install_docker
+clean_space
 
 post_install_reboot() {
     if check_md5 ~/.initialized-3-reboot post_install_reboot; then

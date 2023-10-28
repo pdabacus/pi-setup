@@ -22,5 +22,5 @@ ip addr show
 echo "########################################"
 echo "# main                                 #"
 echo "########################################"
-docker run --rm -it hello-world
+python -c "print('hello')"
 
