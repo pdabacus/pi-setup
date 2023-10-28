@@ -1,0 +1,9 @@
+[Unit]
+Description=checkkerberos
+
+[Timer]
+OnUnitActiveSec=3600s
+OnBootSec=3600s
+
+[Install]
+WantedBy=timers.target

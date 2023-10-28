@@ -164,6 +164,20 @@ update_packages() {
 }
 update_packages
 
+setup_kerberos_timer() {
+    if check_md5 ~/.initialized-7-kerberos setup_kerberos_timer; then
+        echo "setting up kerberos systemd timer" && \
+        cp ~/startkerberos /usr/local/bin/ && \
+        cp ~/checkkerberos.service /usr/lib/systemd/system/ && \
+        cp ~/checkkerberos.timer /usr/lib/systemd/system/ && \
+        systemctl daemon-reload && \
+        systemctl enable checkkerberos.timer && \
+        get_file_portion_md5 setup_kerberos_timer > ~/.initialized-7-kerberos || \
+        ( echo "error: couldnt setup kerberos timer"; exit 1 ) || exit 1
+    fi
+}
+setup_kerberos_timer
+
 setup_auto_login() {
     default_user=$(cat ~/username)
     echo "setting autologin to ${default_user} with systemd getty@tty1"

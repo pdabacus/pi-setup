@@ -22,5 +22,6 @@ ip addr show
 echo "########################################"
 echo "# main                                 #"
 echo "########################################"
-docker run --rm -it hello-world
+startkerberos
+~/brightness.sh
 
