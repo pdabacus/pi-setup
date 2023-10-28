@@ -48,6 +48,8 @@ install_yay() {
     if check_md5 ~/.initialized-1-yay install_yay; then
         sleep 5
         test_wifi && \
+        echo "resetting time ntp" && \
+        sudo timedatectl set-ntp true && \
         echo "installing yay" && \
         git clone "https://aur.archlinux.org/yay/" && \
         cd yay && \
@@ -56,7 +58,7 @@ install_yay() {
         cd .. && \
         rm -rf yay && \
         get_file_portion_md5 install_yay > ~/.initialized-1-yay || \
-        ( echo "error: couldnt setup docker"; exit 1 ) || exit 1
+        ( echo "error: couldnt setup yay"; exit 1 ) || exit 1
     fi
 }
 install_yay
