@@ -65,7 +65,9 @@ install_yay
 
 install_docker() {
     if check_md5 ~/.initialized-2-docker install_docker; then
-        echo "installing docker"
+        sleep 5
+        test_wifi && \
+        echo "installing docker" && \
         yay -Sy --noconfirm docker && \
         echo "adding '$(whoami)' to docker group" && \
         sudo usermod -a -G docker $(whoami) && \
@@ -79,7 +81,9 @@ install_docker
 
 install_v4l() {
     if check_md5 ~/.initialized-3-v4l install_v4l; then
-        echo "installing video 4 linux camera controls"
+        sleep 5
+        test_wifi && \
+        echo "installing video 4 linux camera controls" && \
         yay -Sy --noconfirm v4l-utils && \
         get_file_portion_md5 install_v4l > ~/.initialized-3-v4l || \
         ( echo "error: couldnt setup v4l"; exit 1 ) || exit 1
@@ -87,9 +91,21 @@ install_v4l() {
 }
 install_v4l
 
+setup_kerberos() {
+    if check_md5 ~/.initialized-4-kerberos setup_kerberos; then
+        sleep 5
+        test_wifi && \
+        echo "installing kerberos docker container" && \
+        ~/kerberos/run.sh && \
+        get_file_portion_md5 setup_kerberos > ~/.initialized-4-kerberos || \
+        ( echo "error: couldnt setup v4l"; exit 1 ) || exit 1
+    fi
+}
+setup_kerberos
+
 post_install_reboot() {
-    if check_md5 ~/.initialized-4-reboot post_install_reboot; then
-        get_file_portion_md5 post_install_reboot > ~/.initialized-4-reboot
+    if check_md5 ~/.initialized-5-reboot post_install_reboot; then
+        get_file_portion_md5 post_install_reboot > ~/.initialized-5-reboot
         sudo reboot now
     fi
 }
