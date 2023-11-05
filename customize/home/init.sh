@@ -69,6 +69,7 @@ install_motion() {
         test_wifi && \
         echo "installing motion" && \
         yay -Sy --noconfirm motion && \
+        sudo cp ~/motion.conf /etc/motion/motion.conf && \
         sudo systemctl enable motion && \
         get_file_portion_md5 install_motion > ~/.initialized-2-motion || \
         ( echo "error: couldnt setup motion"; exit 1 ) || exit 1
@@ -87,18 +88,6 @@ install_v4l() {
     fi
 }
 install_v4l
-
-setup_kerberos() {
-    if check_md5 ~/.initialized-4-kerberos setup_kerberos; then
-        sleep 5
-        test_wifi && \
-        echo "installing kerberos docker container" && \
-        ~/kerberos/run.sh && \
-        get_file_portion_md5 setup_kerberos > ~/.initialized-4-kerberos || \
-        ( echo "error: couldnt setup v4l"; exit 1 ) || exit 1
-    fi
-}
-setup_kerberos
 
 post_install_reboot() {
     if check_md5 ~/.initialized-5-reboot post_install_reboot; then

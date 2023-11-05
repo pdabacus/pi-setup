@@ -22,6 +22,5 @@ ip addr show
 echo "########################################"
 echo "# main                                 #"
 echo "########################################"
-startkerberos
 ~/brightness.sh
 
