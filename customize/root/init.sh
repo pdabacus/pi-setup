@@ -164,19 +164,17 @@ update_packages() {
 }
 update_packages
 
-setup_kerberos_timer() {
-    if check_md5 ~/.initialized-7-kerberos setup_kerberos_timer; then
-        echo "setting up kerberos systemd timer" && \
-        cp ~/startkerberos /usr/local/bin/ && \
-        cp ~/checkkerberos.service /usr/lib/systemd/system/ && \
-        cp ~/checkkerberos.timer /usr/lib/systemd/system/ && \
-        systemctl daemon-reload && \
-        systemctl enable checkkerberos.timer && \
-        get_file_portion_md5 setup_kerberos_timer > ~/.initialized-7-kerberos || \
-        ( echo "error: couldnt setup kerberos timer"; exit 1 ) || exit 1
+setup_locale() {
+    if check_md5 ~/.initialized-7-locale setup_locale; then
+        echo "setting up en_US.UTF-8 locale" && \
+        sed -i -r "s|#.*(en_US.UTF.8.*)|\1|" /etc/locale.gen && \
+        locale-gen && \
+        echo "LANG=en_US.UTF-8" > /etc/locale.conf && \
+        get_file_portion_md5 setup_locale > ~/.initialized-7-locale || \
+        ( echo "error: couldnt setup locale"; exit 1 ) || exit 1
     fi
 }
-setup_kerberos_timer
+setup_locale
 
 setup_auto_login() {
     default_user=$(cat ~/username)

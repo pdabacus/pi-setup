@@ -1,6 +1,0 @@
-[Unit]
-Description=ensure kerberos cam is running
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash /usr/local/bin/startkerberos

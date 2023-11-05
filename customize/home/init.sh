@@ -63,21 +63,18 @@ install_yay() {
 }
 install_yay
 
-install_docker() {
-    if check_md5 ~/.initialized-2-docker install_docker; then
+install_motion() {
+    if check_md5 ~/.initialized-2-motion install_motion; then
         sleep 5
         test_wifi && \
-        echo "installing docker" && \
-        yay -Sy --noconfirm docker && \
-        echo "adding '$(whoami)' to docker group" && \
-        sudo usermod -a -G docker $(whoami) && \
-        echo "starting docker daemon" && \
-        sudo systemctl enable --now docker && \
-        get_file_portion_md5 install_docker > ~/.initialized-2-docker || \
-        ( echo "error: couldnt setup docker"; exit 1 ) || exit 1
+        echo "installing motion" && \
+        yay -Sy --noconfirm motion && \
+        sudo systemctl enable motion && \
+        get_file_portion_md5 install_motion > ~/.initialized-2-motion || \
+        ( echo "error: couldnt setup motion"; exit 1 ) || exit 1
     fi
 }
-install_docker
+install_motion
 
 install_v4l() {
     if check_md5 ~/.initialized-3-v4l install_v4l; then
